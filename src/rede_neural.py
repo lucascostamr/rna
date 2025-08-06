@@ -7,18 +7,38 @@ class RedeNeural:
         self.hidden_size = hidden_size
         self.learning_rate = taxa
 
-        self.v1k = [[uniform(-1, 1) for _ in range(input_size)] for _ in range(hidden_size)]
-        self.w11 = [uniform(-1, 1) for _ in range(hidden_size)]
-        self.bias_h = [uniform(-1, 1) for _ in range(hidden_size)]
+        self.v1k = []
+        for _ in range(hidden_size):
+            linha = []
+            for _ in range(input_size):
+                linha.append(uniform(-1, 1))
+            self.v1k.append(linha)
+
+        self.w11 = []
+        for _ in range(hidden_size):
+            self.w11.append(uniform(-1, 1))
+
+        self.bias_h = []
+        for _ in range(hidden_size):
+            self.bias_h.append(uniform(-1, 1))
+
         self.bias_out = uniform(-1, 1)
 
     def feedforward(self, xk):
         self.h = []
         for i in range(self.hidden_size):
-            soma = sum(self.v1k[i][j] * xk[j] for j in range(self.input_size)) + self.bias_h[i]
+            soma = 0
+            for j in range(self.input_size):
+                soma += self.v1k[i][j] * xk[j]
+            soma += self.bias_h[i]
+
             self.h.append(sigmoid(soma))
 
-        soma_out = sum(self.h[i] * self.w11[i] for i in range(self.hidden_size)) + self.bias_out
+        soma_out = 0
+        for i in range(self.hidden_size):
+            soma_out += self.h[i] * self.w11[i]
+        soma_out += self.bias_out
+
         self.y = sigmoid(soma_out)
         return self.y
 
